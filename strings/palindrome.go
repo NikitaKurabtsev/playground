@@ -13,7 +13,6 @@ func checkPalindrome(word string) bool {
 			filtered = append(filtered, unicode.ToLower(r))
 		}
 	}
-
 	for i := 0; i < len(filtered)/2; i++ {
 		if filtered[i] != filtered[len(filtered)-i-1] {
 			return false
