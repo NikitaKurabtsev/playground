@@ -20,21 +20,21 @@ type RateLimiter interface {
 }
 
 type TokenBucketLimiter struct {
-	rate     int
-	capacity int
-	tokens   int
-	lastTime time.Time
-	interval time.Duration
-	mu       sync.Mutex
+	fillRate   int
+	capacity   int
+	tokens     int
+	lastUpdate time.Time
+	interval   time.Duration
+	mu         sync.Mutex
 }
 
 func NewTokenBucketLimiter(rate int, per time.Duration) *TokenBucketLimiter {
 	return &TokenBucketLimiter{
-		rate:     rate,
-		capacity: rate,
-		tokens:   rate,
-		lastTime: time.Now(),
-		interval: per,
+		fillRate:   rate,
+		capacity:   rate,
+		tokens:     rate,
+		lastUpdate: time.Now(),
+		interval:   per,
 	}
 }
 
@@ -43,10 +43,10 @@ func (rl *TokenBucketLimiter) Allow() bool {
 	defer rl.mu.Unlock()
 
 	now := time.Now()
-	elapsed := now.Sub(rl.lastTime)
-	rl.lastTime = now
+	elapsedTime := now.Sub(rl.lastUpdate) // find duration between lastUpdate and now
+	rl.lastUpdate = now                   // update lastUpdate to now
 
-	rl.tokens += int(elapsed.Seconds() * float64(rl.rate))
+	rl.tokens += int(elapsedTime.Seconds() * float64(rl.fillRate)) // update tokens to elapsedTime.Seconds + rate
 	if rl.tokens > rl.capacity {
 		rl.tokens = rl.capacity
 	}
