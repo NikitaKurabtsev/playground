@@ -36,27 +36,40 @@ func NewCache(db KVDatabase, expiration time.Duration) *Cache {
 	}
 }
 
+// we need to implement Get method
+// input string output string from cache or db and the error
+// if something going bad
+// 1. try fetch the key from cache
+// 2. check if found and expired time
+// 3. if not key in cache, get from db and init cache
+// 4. return value
+
 func (c *Cache) Get(key string) (string, error) {
+	// try to fetch the key from the cache
 	c.mu.RLock()
 	item, found := c.cache[key]
 	c.mu.RUnlock()
 
+	// check if the key was found and if it is not expired
 	if found && time.Now().Before(item.expiration) {
-		return item.value, nil
+		return item.value, nil // return the cached value if it is still valid
 	}
 
+	// try to fetch the key from the db
 	value, err := c.db.Get(key)
 	if err != nil {
 		return "", err
 	}
 
+	// update the cache with the key
 	c.mu.Lock()
+	defer c.mu.Unlock()
 	c.cache[key] = CacheItem{
 		value:      value,
-		expiration: time.Now().Add(c.expiration),
+		expiration: time.Now().Add(c.expiration), // set expiration time for the cache item
 	}
-	c.mu.Unlock()
 
+	// return the value
 	return value, nil
 }
 
