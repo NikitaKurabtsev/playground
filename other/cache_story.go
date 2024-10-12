@@ -61,15 +61,15 @@ func (c *Cache) Get(key string) (string, error) {
 		return "", err
 	}
 
-	// update the cache with the key
 	c.mu.Lock()
 	defer c.mu.Unlock()
+
+	// update the cache with the key
 	c.cache[key] = CacheItem{
 		value:      value,
 		expiration: time.Now().Add(c.expiration), // set expiration time for the cache item
 	}
 
-	// return the value
 	return value, nil
 }
 
