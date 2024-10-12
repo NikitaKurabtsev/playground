@@ -19,7 +19,7 @@ type RateLimiter interface {
 	Reset() time.Time
 }
 
-type TokenBucketLimiter struct {
+type TokenBucket struct {
 	fillRate   int
 	capacity   int
 	tokens     int
@@ -28,8 +28,8 @@ type TokenBucketLimiter struct {
 	mu         sync.Mutex
 }
 
-func NewTokenBucketLimiter(rate int, per time.Duration) *TokenBucketLimiter {
-	return &TokenBucketLimiter{
+func NewTokenBucket(rate int, per time.Duration) *TokenBucket {
+	return &TokenBucket{
 		fillRate:   rate,
 		capacity:   rate,
 		tokens:     rate,
@@ -38,7 +38,7 @@ func NewTokenBucketLimiter(rate int, per time.Duration) *TokenBucketLimiter {
 	}
 }
 
-func (rl *TokenBucketLimiter) Allow() bool {
+func (rl *TokenBucket) Allow() bool {
 	rl.mu.Lock()
 	defer rl.mu.Unlock()
 
@@ -59,17 +59,17 @@ func (rl *TokenBucketLimiter) Allow() bool {
 	return true
 }
 
-func (rl *TokenBucketLimiter) Limit() int {
+func (rl *TokenBucket) Limit() int {
 	return rl.capacity
 }
 
-func (rl *TokenBucketLimiter) Remaining() int {
+func (rl *TokenBucket) Remaining() int {
 	rl.mu.Lock()
 	defer rl.mu.Unlock()
 	return rl.tokens
 }
 
-func (rl *TokenBucketLimiter) Reset() time.Time {
+func (rl *TokenBucket) Reset() time.Time {
 	return time.Now().Add(rl.interval)
 }
 
@@ -97,7 +97,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	rateLimiter := NewTokenBucketLimiter(2, time.Second)
+	rateLimiter := NewTokenBucket(2, time.Second)
 
 	http.Handle("/", RateLimitMiddleware(rateLimiter)(http.HandlerFunc(helloHandler)))
 
