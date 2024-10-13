@@ -38,39 +38,39 @@ func NewTokenBucket(rate int, per time.Duration) *TokenBucket {
 	}
 }
 
-func (rl *TokenBucket) Allow() bool {
-	rl.mu.Lock()
-	defer rl.mu.Unlock()
+func (tb *TokenBucket) Allow() bool {
+	tb.mu.Lock()
+	defer tb.mu.Unlock()
 
 	now := time.Now()
-	timeElapsed := now.Sub(rl.lastUpdate)                          // find duration between lastUpdate and now
-	rl.lastUpdate = now                                            // update lastUpdate to now
-	rl.tokens += int(timeElapsed.Seconds() * float64(rl.fillRate)) // update tokens to timeElapsed.Seconds + rate
+	timeElapsed := now.Sub(tb.lastUpdate)                          // find duration between lastUpdate and now
+	tb.lastUpdate = now                                            // update lastUpdate to now
+	tb.tokens += int(timeElapsed.Seconds() * float64(tb.fillRate)) // update tokens to timeElapsed.Seconds + rate
 
-	if rl.tokens > rl.capacity {
-		rl.tokens = rl.capacity
+	if tb.tokens > tb.capacity {
+		tb.tokens = tb.capacity
 	}
 
-	if rl.tokens < 1 {
+	if tb.tokens < 1 {
 		return false
 	}
 
-	rl.tokens--
+	tb.tokens--
 	return true
 }
 
-func (rl *TokenBucket) Limit() int {
-	return rl.capacity
+func (tb *TokenBucket) Limit() int {
+	return tb.capacity
 }
 
-func (rl *TokenBucket) Remaining() int {
-	rl.mu.Lock()
-	defer rl.mu.Unlock()
-	return rl.tokens
+func (tb *TokenBucket) Remaining() int {
+	tb.mu.Lock()
+	defer tb.mu.Unlock()
+	return tb.tokens
 }
 
-func (rl *TokenBucket) Reset() time.Time {
-	return time.Now().Add(rl.interval)
+func (tb *TokenBucket) Reset() time.Time {
+	return time.Now().Add(tb.interval)
 }
 
 func RateLimitMiddleware(rl RateLimiter) func(http.Handler) http.Handler {
