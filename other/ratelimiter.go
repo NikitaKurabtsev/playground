@@ -43,9 +43,9 @@ func (rl *TokenBucket) Allow() bool {
 	defer rl.mu.Unlock()
 
 	now := time.Now()
-	elapsedTime := now.Sub(rl.lastUpdate)                          // find duration between lastUpdate and now
+	timeElapsed := now.Sub(rl.lastUpdate)                          // find duration between lastUpdate and now
 	rl.lastUpdate = now                                            // update lastUpdate to now
-	rl.tokens += int(elapsedTime.Seconds() * float64(rl.fillRate)) // update tokens to elapsedTime.Seconds + rate
+	rl.tokens += int(timeElapsed.Seconds() * float64(rl.fillRate)) // update tokens to timeElapsed.Seconds + rate
 
 	if rl.tokens > rl.capacity {
 		rl.tokens = rl.capacity
