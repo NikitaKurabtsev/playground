@@ -11,7 +11,7 @@ func (s *Stack) Push(value int) {
 }
 
 func (s *Stack) Pop() (int, error) {
-	if len(s.items) == 0 {
+	if s.IsEmpty() {
 		return 0, errors.New("stack is empty")
 	}
 
@@ -21,11 +21,18 @@ func (s *Stack) Pop() (int, error) {
 }
 
 func (s *Stack) Peek() (int, error) {
-	if len(s.items) == 0 {
+	if s.IsEmpty() {
 		return 0, errors.New("stack is empty")
 	}
 
 	return s.items[len(s.items)-1], nil
+}
+
+func (s *Stack) IsEmpty() bool {
+	if len(s.items) == 0 {
+		return true
+	}
+	return false
 }
 
 func main() {}
