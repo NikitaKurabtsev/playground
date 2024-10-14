@@ -1,6 +1,9 @@
 package main
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 type Stack struct {
 	items []int
@@ -16,7 +19,7 @@ func (s *Stack) Pop() (int, error) {
 	}
 
 	poppedItem := s.items[len(s.items)-1]
-	s.items = s.items[:poppedItem]
+	s.items = s.items[:len(s.items)-1]
 	return poppedItem, nil
 }
 
@@ -35,4 +38,29 @@ func (s *Stack) IsEmpty() bool {
 	return false
 }
 
-func main() {}
+func main() {
+	stack := &Stack{}
+
+	fmt.Println(stack.IsEmpty())
+
+	stack.Push(1)
+	stack.Push(3)
+
+	stackPeek, err := stack.Peek()
+	if err != nil {
+		err.Error()
+	}
+	fmt.Printf("Peek %d\n", stackPeek)
+
+	popItem, err := stack.Pop()
+	if err != nil {
+		err.Error()
+	}
+	fmt.Printf("Popped item: %d\n", popItem)
+
+	popItem, err = stack.Pop()
+	if err != nil {
+		err.Error()
+	}
+	fmt.Printf("Popped item: %d\n", popItem)
+}
