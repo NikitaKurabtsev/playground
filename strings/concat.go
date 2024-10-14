@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	strings2 "strings"
 )
 
 func concatStringsBad(string1, string2 string) (string, error) {
@@ -48,6 +49,19 @@ func concatString(s1, s2 string) (string, error) {
 	return s1 + s2, nil
 }
 
+func join(strings ...string) (string, error) {
+	if len(strings) == 0 {
+		return "", errors.New("nothing to join, empty input")
+	}
+
+	var sb strings2.Builder
+
+	for _, s := range strings {
+		sb.WriteString(s)
+	}
+	return sb.String(), nil
+}
+
 func main() {
 	s1 := "Hello"
 	s2 := "WorldSomeAdditionalInformation"
@@ -58,4 +72,11 @@ func main() {
 	}
 
 	fmt.Println(concatWord)
+
+	joinStrings, err := join(s1, s2)
+	if err != nil {
+		err.Error()
+	}
+
+	fmt.Println(joinStrings)
 }
