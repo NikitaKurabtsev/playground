@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type Node struct {
 	Value int
 	Left  *Node
@@ -28,6 +30,19 @@ func InsertNode(node *Node, value int) *Node {
 	return node
 }
 
+func (bt *BinaryTree) DFS() {
+	DFSHelper(bt.root)
+}
+
+func DFSHelper(node *Node) {
+	if node == nil {
+		return
+	}
+	DFSHelper(node.Left)
+	fmt.Printf("%d ", node.Value)
+	DFSHelper(node.Right)
+}
+
 func main() {
 	bt := &BinaryTree{}
 	bt.Insert(100)
@@ -35,4 +50,6 @@ func main() {
 	bt.Insert(120)
 	bt.Insert(30)
 	bt.Insert(200)
+
+	bt.DFS()
 }
