@@ -43,6 +43,28 @@ func DFSHelper(node *Node) {
 	DFSHelper(node.Right)
 }
 
+func (bt *BinaryTree) BFS() {
+	if bt.root == nil {
+		return
+	}
+
+	queue := []*Node{bt.root}
+
+	for len(queue) > 0 {
+		node := queue[0]
+		queue = queue[1:]
+
+		fmt.Printf("%d ", node.Value)
+
+		if node.Left != nil {
+			queue = append(queue, node.Left)
+		}
+		if node.Right != nil {
+			queue = append(queue, node.Right)
+		}
+	}
+}
+
 func main() {
 	bt := &BinaryTree{}
 	bt.Insert(100)
@@ -51,5 +73,11 @@ func main() {
 	bt.Insert(30)
 	bt.Insert(200)
 
+	fmt.Println("DFS")
 	bt.DFS()
+
+	fmt.Println()
+
+	fmt.Println("BFS")
+	bt.BFS()
 }
