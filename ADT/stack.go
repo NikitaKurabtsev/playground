@@ -20,4 +20,12 @@ func (s *Stack) Pop() (int, error) {
 	return poppedItem, nil
 }
 
+func (s *Stack) Peek() (int, error) {
+	if len(s.items) == 0 {
+		return 0, errors.New("stack is empty")
+	}
+
+	return s.items[len(s.items)-1], nil
+}
+
 func main() {}
